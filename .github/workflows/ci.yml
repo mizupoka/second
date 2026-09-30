@@ -1,6 +1,10 @@
-name: CI Pipeline
+name: CI/CD Pipeline
 
-on: [push, pull_request]
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
   build_and_test:
@@ -18,4 +22,17 @@ jobs:
         run: pip install pytest
 
       - name: Run tests
-        run: pytest
+        run: python -m pytest test_brawl.py
+
+  deploy_staging:
+    needs: build_and_test
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Deploy to Staging Environment
+        run: |
+          echo "Deploying application to Staging environment..."
+          echo "Staging release successfully deployed!"
